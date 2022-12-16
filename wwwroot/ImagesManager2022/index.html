@@ -220,9 +220,9 @@
         let createMode = true;
         let searchCategory = "";
         let searchTitle = "";
-        let descendant = false;
+        let FiltreAsc = false;
         let hideSearchBar = true;
-        let imageIdToDelete = 0; // used by confirmDeleteDlg
+        let imageIdToDelete = 0; 
         let selectedCategory = "";
         let imagesCount = 50;
         let appendCount = 3;
@@ -240,11 +240,11 @@
                 getImagesList();
             }
         }
-        function Ascendant() {
-            if (descendant)
-                descendant = false;
+        function Filtre() {
+            if (FiltreAsc)
+                FiltreAsc = false;
             else
-                descendant = true;
+                FiltreAsc = true;
 
             getImagesList();
         }
@@ -266,6 +266,7 @@
                 }
             }
             else {
+                $("#verifyCmd").hide();
                 $("#profilBar").hide();
                 $("#newImageCmd").hide();
                 $("#connectionBar").show();
@@ -314,7 +315,7 @@
                 selectedCategory = $("#searchCategory").val();
 
                 if (appendMode) {
-                    if (descendant) {
+                    if (FiltreAsc) {
                         queryString = `?sort=Date,desc&offset=${Math.trunc(imagesCount / appendCount)}&limit=${appendCount}`;
                         imagesCount += appendCount;
                     }
@@ -324,7 +325,7 @@
                     }
 
                 } else {
-                    if (descendant) {
+                    if (FiltreAsc) {
                         queryString = `?sort=Date,desc&offset=${0}&limit=${imagesCount}`;
                     }
                     else {
@@ -475,7 +476,6 @@
             holdCheckETag = true;
             createMode = false;
             let user = retrieveLoggeduser();
-            //manque le account form info
             $("#Id_input").val(user.Id);
             $("#Avatar_GUID_input").val(user.AvatarGUID);
             $("#username_input").val(user.Name);
@@ -658,7 +658,6 @@
             $("#Id_input").val(image.Id);
             $("#GUID_input").val(image.GUID);
             $("#date_input").val(image.Date);
-            //$("#date_input").val(Date.now());
             $("#title_input").val(image.Title);
             $("#description_input").val(image.Description);
             $("#shared_input").prop("checked", image.Shared);
@@ -683,9 +682,8 @@
                 $(this).css('cursor', 'auto');
             });
 
-            //Show login credential if connected
             initHeaderPannel()
-            $("#sortCmd").click(Ascendant)
+            $("#sortCmd").click(Filtre)
             $("#newImageCmd").click(newImage)
             $("#subscribeCmd").click(newAccount)
             $("#loginCmd").click(accountLogin)
@@ -701,7 +699,6 @@
                     $("#searchBar").show();
 
             })
-            //$("#confirmDeleteDlgOkBtn").click(deleteImageFromData)
             $("#AccountLogoutDlg").dialog({
                 title: "...",
                 autoOpen: false,
@@ -840,7 +837,6 @@
                     id: "AccountDlgOkBtn",
                     text: "Title will be changed dynamically",
                     click: function () {
-                        //accountfromform function a faire
                         let account = accountFromForm();
                         if (account) {
                             if (createMode) {

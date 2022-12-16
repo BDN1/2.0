@@ -1,11 +1,15 @@
 const apiBaseURL = "http://localhost:5000/api/images";
-const apiURL = "http://localhost:5000";
-let idUser = 0;
 function storeLoggedUser(userProfil) {
   sessionStorage.setItem("userProfil", JSON.stringify(userProfil));
 }
 function storeAccessToken(token) {
   sessionStorage.setItem("token", token);
+}
+function storeRegisterId(id) {
+  sessionStorage.setItem("RegisterId", id);
+}
+function retrieveRegisterId(){
+  return JSON.parse(sessionStorage.getItem("RegisterId"));
 }
 function eraseAccessToken() {
   sessionStorage.removeItem("token");
@@ -90,8 +94,6 @@ function PUT(image, successCallBack, errorCallBack) {
   });
 }
 function DELETE(id, successCallBack, errorCallBack) {
-  // let user = sessionStorage.getItem("userProfil");
-  // let userid = JSON.parse(user).Id;
   $.ajax({
     url: apiBaseURL + "/" + id,
     type: "DELETE",
@@ -152,9 +154,10 @@ function LOGOUT(successCallBack, errorCallBack) {
   });
 }
 function VERIFY(VerifyCode, successCallBack, errorCallBack) {
+    let RegisterId = retrieveRegisterId();
     $.ajax({
-      
-      url: `http://localhost:5000/Accounts/verify?id=${idUser}&code=${VerifyCode}`,
+    
+      url: `http://localhost:5000/Accounts/verify?id=${RegisterId}&code=${VerifyCode}`,
       type: "GET",
       contentType: "application/json",
       data: JSON.stringify(VerifyCode),
@@ -200,7 +203,6 @@ function GET_USER(id, successCallBack, errorCallBack) {
   });
 }
 
- //vérification du mot de passe.
 function REGISTER(data, successCallBack, errorCallBack) {
   $.ajax({
     url: "http://localhost:5000/Accounts/register",
@@ -208,7 +210,7 @@ function REGISTER(data, successCallBack, errorCallBack) {
     contentType: "application/json",
     data: JSON.stringify(data),
     success: function (data) {
-      idUser = data.Id;
+      storeRegisterId(data.id);
       successCallBack(data);
     },
     error: function (jqXHR) {
